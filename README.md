@@ -20,11 +20,11 @@ There are different ways of messaging between services such as pass-through mess
 
 Conventional message processing methods include a message processor for process message, but pass-through messaging skipped the message processor. So it saves the processing time and power and more efficient when compared with other types.
 
-Now let's get understand about the scenario which described here. The company owned two sub-offices and head office as LK Sub Office, UK Sub Office and US Head Office. When you are connecting to a sub-office it will automatically be redirected to the head office without any latency. To do so, here it used the pass-through messaging method.
+Now let's get understand about the scenario which described here. The owner need to expand the business. So he make online shop which connected to the local shop, to expand the business growth. When you are connecting to the online shop, it will automatically be redirected to the local shop without any latency. To do so, here it used the pass-through messaging method.
 
 ![alt text](images/samplescenario.jpg)
 
-The three offices implemented as three separate services named 'LKSubOffice', 'UKSubOffice' and 'USHeadOffice'. When a user calls to 'LKSubOffice' or 'UKSubOffice' using HTTP request, the request redirected to the 'USHeadOffice' service without processing the incoming request. If it processes the incoming request, it will no longer a pass-through messaging. So 'LKSubOffice', 'UKSubOffice' services act as pass-through messaging services. The 'USHeadOffice' service processes the incoming request method such as 'GET', 'POST'. Then call to the back-end service, which will give the "Welcome to WSO2 US head office!" message. So the 'USHeadOffice' service is not a pass-through messaging service.
+The two shops implemented as two separate services named as 'OnlineShopping' and 'LocalShop'. When a user calls to 'OnlineShopping' using HTTP request, the request redirected to the 'LocalShop' service without processing the incoming request. Also response from the 'LocalShop' is not be processed in 'OnlineShopping'. If it processes the incoming request or response from the 'LocalShop', it will no longer a pass-through messaging. So messaging between 'OnlineShopping' and 'LocalShop' services act as pass-through messaging. The 'LocalShop' service processes the incoming request method such as 'GET', 'POST'. Then call to the back-end service, which will give the "Welcome to Local Shop! Please put your order here....." message. So messaing in the 'LocalShop' service is not a pass-through messaging service.
 
 ## Prerequisites
  
@@ -69,20 +69,26 @@ To implement the scenario, let's started to implement the passthrough.bal, which
 
 import ballerina/http;
 import ballerina/log;
-
-//Define endpoint for the sub offices as head office link
+endpoint http:Listener OnlineShoppingEP {
+    port:9090
+};
+endpoint http:Listener LocalShopEP {
+    port:9091
+};
+//Define end-point for the local shop as online shop link
 endpoint http:Client clientEP {
-    url: "http://localhost:9092/USHeadOffice"
+    url: "http://localhost:9091/LocalShop"
 };
 
-service<http:Service> LKSubOffice bind { port: 9090 } {
-    // This service implement as a passthrough service. So it allows all HTTP methods. So methods are not specified.
+service<http:Service> OnlineShopping bind OnlineShoppingEP {
+    // This service implement as a passthrough servise. So it allows all HTTP methods. So methods are not specified.
     @http:ResourceConfig {
         path: "/"
     }
+
     passthrough(endpoint caller, http:Request req) {
         // set log message as "the request will be directed to another service" in pass-through method.
-        log:printInfo("You will be redirected to US head office from LK sub office  .......");
+        log:printInfo("You will be redirected to Local Shop  .......");
         //'Forward()' used to call the backend endpoint created above as pass-through method. In forward function,
         //it used the same HTTP method, which used to invoke the primary service.
         // The `forward()` function returns the response from the backend if there are no errors.
@@ -108,53 +114,26 @@ service<http:Service> LKSubOffice bind { port: 9090 } {
     }
 }
 
-
-// This service is also implemented as above service to undertand the scenario
-service<http:Service> UKSubOffice bind { port: 9091 } {
-    @http:ResourceConfig {
-        path: "/"
-    }
-    passthrough(endpoint caller, http:Request req) {
-        log:printInfo("You will be redirected to US head office from UK sub office  .......");
-        var clientResponse = clientEP->forward("/", req);
-        match clientResponse {
-            http:Response res => {
-                caller->respond(res) but { error e =>
-                log:printError("Error sending response", err = e) };
-            }
-            error err => {
-                http:Response res = new;
-                res.statusCode = 500;
-                res.setPayload(err.message);
-                caller->respond(res) but { error e =>
-                log:printError("Error sending response", err = e) };
-            }
-        }
-    }
-}
-
-
 //Sample Head office servise service.
-service<http:Service> USHeadOffice bind { port: 9092 } {
-    //The helloResource only accepts requests made using the specified HTTP methods.
+service<http:Service> LocalShop bind LocalShopEP {
+    //The LocalShop only accepts requests made using the specified HTTP methods.
     @http:ResourceConfig {
         methods: ["POST", "GET"],
         path: "/"
     }
     helloResource(endpoint caller, http:Request req) {
-        //Set log to view the status to know that the passthrough was successful.
-        log:printInfo("Now You are connected to US head office  .......");
+        //Set log to view the status to know that the passthrough was successfull.
+        log:printInfo("Now You are connected to Local shop  .......");
         // Make the response for the request
         http:Response res = new;
-        res.setPayload("Welcome to WSO2 US head office!");
+        res.setPayload("Welcome to Local Shop! Please put your order here.....");
         // Pass the response to the caller
         caller->respond(res)
-        // Catch the errors occurred while passing the response
+        // Cath the errors occured while passing the response
         but { error e =>
         log:printError("Error sending response", err = e) };
     }
 }
-
 ```
 ## Testing 
 
