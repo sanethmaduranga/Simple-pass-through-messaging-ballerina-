@@ -20,11 +20,11 @@ There are different ways of messaging between services such as pass-through mess
 
 Conventional message processing methods include a message processor for process message, but pass-through messaging skipped the message processor. So it saves the processing time and power and more efficient when compared with other types.
 
-Now let's get understand about the scenario which described here. The owner need to expand the business. So he make online shop which connected to the local shop, to expand the business growth. When you are connecting to the online shop, it will automatically be redirected to the local shop without any latency. To do so, here it uses the pass-through messaging method.
+Now let's get understand about the scenario which described here. The owner needs to expand the business. So he makes online shop which connected to the local shop, to expand the business growth. When you are connecting to the online shop, it will automatically be redirected to the local shop without any latency. To do so, here it uses the pass-through messaging method.
 
 ![alt text](images/samplescenario.jpg)
 
-The two shops implemented as two separate services named as 'OnlineShopping' and 'LocalShop'. When a user calls to 'OnlineShopping' using HTTP request, the request redirected to the 'LocalShop' service without processing the incoming request. Also response from the 'LocalShop' is not be processed in 'OnlineShopping'. If it processes the incoming request or response from the 'LocalShop', it will no longer a pass-through messaging. So messaging between 'OnlineShopping' and 'LocalShop' services act as pass-through messaging. The 'LocalShop' service processes the incoming request method such as 'GET', 'POST'. Then call to the back-end service, which will give the "Welcome to Local Shop! Please put your order here....." message. So messaing in the 'LocalShop' service is not a pass-through messaging service.
+The two shops implemented as two separate services named as 'OnlineShopping' and 'LocalShop'. When a user calls to 'OnlineShopping' using HTTP request, the request redirected to the 'LocalShop' service without processing the incoming request. Also response from the 'LocalShop' is not be processed in 'OnlineShopping'. If it processes the incoming request or response from the 'LocalShop', it will no longer a pass-through messaging. So messaging between 'OnlineShopping' and 'LocalShop' services act as pass-through messaging. The 'LocalShop' service processes the incoming request method such as 'GET', 'POST'. Then call to the back-end service, which will give the "Welcome to Local Shop! Please put your order here....." message. So messaging in the 'LocalShop' service is not a pass-through messaging service.
 
 ## Prerequisites
  
@@ -145,7 +145,7 @@ service<http:Service> LocalShop bind LocalShopEP {
    $ ballerina run passthrough.bal
 ```
    
-- Then you can send request to online shopping service.
+- Then you can send a request to online shopping service.
 
 ```bash
 
