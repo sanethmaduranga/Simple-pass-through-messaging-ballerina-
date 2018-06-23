@@ -20,7 +20,7 @@ There are different ways of messaging between services such as pass-through mess
 
 Conventional message processing methods include a message processor for process message, but pass-through messaging skipped the message processor. So it saves the processing time and power and more efficient when compared with other types.
 
-Now let's get understand about the scenario which described here. The owner need to expand the business. So he make online shop which connected to the local shop, to expand the business growth. When you are connecting to the online shop, it will automatically be redirected to the local shop without any latency. To do so, here it used the pass-through messaging method.
+Now let's get understand about the scenario which described here. The owner need to expand the business. So he make online shop which connected to the local shop, to expand the business growth. When you are connecting to the online shop, it will automatically be redirected to the local shop without any latency. To do so, here it uses the pass-through messaging method.
 
 ![alt text](images/samplescenario.jpg)
 
@@ -114,7 +114,7 @@ service<http:Service> OnlineShopping bind OnlineShoppingEP {
     }
 }
 
-//Sample Head office servise service.
+//Sample Local Shop service.
 service<http:Service> LocalShop bind LocalShopEP {
     //The LocalShop only accepts requests made using the specified HTTP methods.
     @http:ResourceConfig {
@@ -145,67 +145,33 @@ service<http:Service> LocalShop bind LocalShopEP {
    $ ballerina run passthrough.bal
 ```
    
-- Then you may have two options of the request when connecting to a sub-office.
-
-#### Case 1
-
-- To connect to LK sub-office
+- Then you can send request to online shopping service.
 
 ```bash
 
- $ curl -v http://localhost:9090/LKSubOffice -X GET
+ $ curl -v http://localhost:9090/OnlineShopping -X GET
 
 ```
 #### Output
 
-When connecting to the LK sub-office, the output will be the "Welcome to WSO2 US head office!" from the US head office.
+When connecting to the online shopping, the output will be the "Welcome to Local Shop! Please put your order here....." from the local shop.
 
 ```bash
 < HTTP/1.1 200 OK
 < content-type: text/plain
-< date: Mon, 11 Jun 2018 18:09:21 +0530
+< date: Sat, 23 Jun 2018 05:45:17 +0530
 < server: ballerina/0.970.1
-< content-length: 31
+< content-length: 54
 < 
 * Connection #0 to host localhost left intact
-Welcome to WSO2 US head office!
+Welcome to Local Shop! Please put your order here.....
 ```
 
 To identify the message flow inside the services, there will be INFO in the notification channel.
 
 ```bash
-2018-06-11 18:09:21,315 INFO  [] - You will be redirected to US head office from LK sub office  ....... 
-2018-06-11 18:09:21,430 INFO  [] - Now You are connected to US head office  ....... 
-```
-
-#### Case 2
-
-- To connect to UK sub-office
-
-```bash
- $ curl -v http://localhost:9091/UKSubOffice -X GET
-```
-#### Output
-
-When connecting to the UK sub-office, the output will be the "Welcome to WSO2 US head office!" from the US head office.
-
-```bash
-< HTTP/1.1 200 OK
-< content-type: text/plain
-< date: Mon, 11 Jun 2018 18:16:51 +0530
-< server: ballerina/0.970.1
-< content-length: 31
-< 
-* Connection #0 to host localhost left intact
-Welcome to WSO2 US head office!
-```
-
-To identify the message flow inside the services, there will be INFO in the notification channel.
-
-```bash
-2018-06-11 18:16:51,396 INFO  [] - You will be redirected to US head office from UK sub office  ....... 
-2018-06-11 18:16:51,497 INFO  [] - Now You are connected to US head office  ....... 
-
+2018-06-23 05:45:27,849 INFO  [passthrough] - You will be redirected to Local Shop  ....... 
+2018-06-23 05:45:27,864 INFO  [passthrough] - Now You are connected to Local shop  ....... 
 ```
 
 ### Writing unit tests 
@@ -214,7 +180,7 @@ In Ballerina, the unit test cases should be in the same package inside a folder 
 - Test functions should be annotated with `@test:Config`. See the below example.
 ```ballerina
    @test:Config
-   function testLKSubOffice() {
+   function testFunc() {
    }
 ```
 This guide contains unit test case for 'LKSubOffice' service and 'UKSubOffice' service in [passthrough_test.bal](https://github.com/sanethmaduranga/Pass-through-messaging-ballerina-/blob/master/guide/tests/passthrough_test.bal) file.
