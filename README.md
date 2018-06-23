@@ -183,7 +183,7 @@ In Ballerina, the unit test cases should be in the same package inside a folder 
    function testFunc() {
    }
 ```
-This guide contains unit test case for 'LKSubOffice' service and 'UKSubOffice' service in [passthrough_test.bal](https://github.com/sanethmaduranga/Pass-through-messaging-ballerina-/blob/master/guide/tests/passthrough_test.bal) file.
+This guide contains unit test case for 'LKSubOffice' service and 'UKSubOffice' service in [passthrough_test.bal](https://github.com/sanethmaduranga/Simple-pass-through-messaging-ballerina-/blob/master/guide/tests/passthrough_test.bal) file.
 To run the unit tests, navigate to `Pass-through-messaging-ballerina-/guide/` and run the following command. 
 ```bash
    $ ballerina test
