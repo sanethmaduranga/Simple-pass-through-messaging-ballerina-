@@ -84,7 +84,7 @@ service<http:Service> OnlineShopping bind OnlineShoppingEP {
 
 
 
-//Sample Head office servise service.
+//Sample Local Shop service.
 service<http:Service> LocalShop bind LocalShopEP {
     //The LocalShop only accepts requests made using the specified HTTP methods.
     @http:ResourceConfig {
